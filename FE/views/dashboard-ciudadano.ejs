@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Ciudadano - Bienestar Animal Bogotá</title>
+    <link rel="stylesheet" href="/interfaz.css">
+</head>
+
+<body>
+
+    <%
+        const estadoSolicitud = {
+            Pendiente: { texto: 'En revisión', clase: 'insignia-ambar' },
+            Aprobada: { texto: 'Aprobada', clase: 'insignia-verde' },
+            Rechazada: { texto: 'Rechazada', clase: 'insignia-roja' }
+        };
+        const estadoEmergencia = {
+            Pendiente: { texto: 'Esperando refugio', clase: 'insignia-ambar' },
+            Aceptada: { texto: 'Atendido', clase: 'insignia-verde' }
+        };
+        const tiposEmergencia = {
+            atropellado: 'Animal herido / Atropellado',
+            maltrato: 'Posible maltrato',
+            abandono: 'Animal abandonado'
+        };
+        const fecha = (valor) => new Date(valor).toLocaleDateString('es-CO');
+    %>
+
+    <nav class="menu">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir o cerrar el menú" autocomplete="off">
+        <label for="menu-toggle" class="menu-icono"></label>
+        <img src="/imagenes/logo.svg" alt="Logo Bienestar Animal" class="logo">
+        <ul class="menu-lista">
+            <li><a href="/catalogo">Ver Catálogo</a></li>
+            <li><a href="/logout" style="color: #EF4444;">Cerrar Sesión</a></li>
+        </ul>
+        <span class="btn-signin" style="background-color: #334155; font-size: 13px;">Ciudadano / Adoptante</span>
+    </nav>
+
+    <main class="contenido-catalogo">
+
+        <div class="catalogo-header">
+            <h1>Bienvenido, <%= email %></h1>
+            <p>Desde este espacio puedes solicitar la adopción de las mascotas del catálogo y reportar emergencias para proteger a los animales en Bogotá D.C.</p>
+        </div>
+
+        <% if (ok) { %><p class="mensaje-exito"><%= ok %></p><% } %>
+        <% if (error) { %><p class="mensaje-error"><%= error %></p><% } %>
+
+        <!-- Contenedor Principal en Dos Columnas -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 20px;">
+            
+            <!-- Columna 1: Formulario de Reporte de Emergencia en Tiempo Real -->
+            <div class="tarjeta-mascota" style="padding: 25px;">
+                <h3 style="color: #EF4444; margin-bottom: 10px;">Reportar Emergencia en Vivo</h3>
+                <p class="descripcion-animal" style="margin-bottom: 20px;">¿Viste un animal en peligro, atropellado o en situación crítica? Tu alerta le llegará a los refugios aliados; el primero que pueda atenderla la aceptará.</p>
+                
+                <form action="/reportar-emergencia" method="POST">
+                    <label style="color: #94A3B8; font-size: 14px; display: block; margin-bottom: 5px;">Tipo de Emergencia</label>
+                    <select name="tipo_emergencia" style="width: 100%; padding: 10px; margin-bottom: 12px; background: #0F172A; color: #F8FAFC; border: 1px solid #334155; border-radius: 6px;">
+                        <option value="atropellado">Animal herido / Atropellado</option>
+                        <option value="maltrato">Posible caso de maltrato</option>
+                        <option value="abandono">Animal abandonado en vía pública</option>
+                    </select>
+
+                    <label style="color: #94A3B8; font-size: 14px; display: block; margin-bottom: 5px;">Localidad o Dirección exacta en Bogotá</label>
+                    <input type="text" name="ubicacion" maxlength="200" placeholder="Ej. Calle 100 con Carrera 15, Usaquén" required style="width: 100%; padding: 10px; margin-bottom: 12px; background: #0F172A; color: #F8FAFC; border: 1px solid #334155; border-radius: 6px; box-sizing: border-box;">
+
+                    <label style="color: #94A3B8; font-size: 14px; display: block; margin-bottom: 5px;">Descripción breve y estado del animal</label>
+                    <textarea name="descripcion" rows="3" maxlength="1000" placeholder="Detalles visibles, color, si se puede mover..." required style="width: 100%; padding: 10px; margin-bottom: 15px; background: #0F172A; color: #F8FAFC; border: 1px solid #334155; border-radius: 6px; box-sizing: border-box; resize: none;"></textarea>
+
+                    <button type="submit" class="boton btn-adoptar" style="width: 100%; cursor: pointer; border: none; background-color: #EF4444;">Enviar Alerta de Emergencia</button>
+                </form>
+            </div>
+
+            <!-- Columna 2: Mis Solicitudes y Reportes Activos -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- Estado de Solicitudes de Adopción -->
+                <div class="tarjeta-mascota" style="padding: 25px;">
+                    <h3>Mis Solicitudes de Adopción</h3>
+                    <p class="descripcion-animal" style="margin-bottom: 15px;">Seguimiento de tus trámites. El refugio responde desde su panel:</p>
+
+                    <% if (solicitudes.length === 0) { %>
+                        <p class="panel-vacio">Aún no has enviado solicitudes. Explora el <a href="/catalogo" style="color: #0EA5E9;">catálogo de adopciones</a>.</p>
+                    <% } %>
+                    <% solicitudes.forEach(function(s) { const e = estadoSolicitud[s.estado] || { texto: s.estado, clase: 'insignia-gris' }; %>
+                        <div class="panel-caja">
+                            <div class="panel-fila">
+                                <span class="panel-titulo">Proceso por: <%= s.mascota_id ? s.mascota_id.nombre : 'Mascota eliminada' %><%= s.mascota_id ? ' (' + s.mascota_id.especie + ')' : '' %></span>
+                                <span class="insignia <%= e.clase %>"><%= e.texto %></span>
+                            </div>
+                            <p class="panel-texto">
+                                <%= s.refugio_id ? 'Refugio: ' + s.refugio_id.nombre + ' • ' : '' %>Enviada el <%= fecha(s.createdAt) %>
+                            </p>
+                            <% if (s.respuesta) { %>
+                                <p class="panel-texto">Respuesta del refugio: <%= s.respuesta %></p>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- Historial de Reportes de Emergencia del Ciudadano -->
+                <div class="tarjeta-mascota" style="padding: 25px;">
+                    <h3>Mis Reportes Ciudadanos</h3>
+
+                    <% if (emergencias.length === 0) { %>
+                        <p class="panel-vacio">No has enviado reportes de emergencia.</p>
+                    <% } %>
+                    <% emergencias.forEach(function(r, i) { const e = estadoEmergencia[r.estado] || { texto: r.estado, clase: 'insignia-gris' }; %>
+                        <div class="panel-caja" style="margin-top: 10px;">
+                            <div class="panel-fila">
+                                <span class="panel-titulo"><%= r.ubicacion %> - <%= tiposEmergencia[r.tipo] || r.tipo %></span>
+                                <span class="insignia <%= e.clase %>"><%= e.texto %></span>
+                            </div>
+                            <p class="panel-texto">
+                                <% if (r.estado === 'Aceptada' && r.atendido_por) { %>
+                                    Atiende el caso: <%= r.atendido_por.nombre %><%= r.atendido_por.telefono ? ' (Tel. ' + r.atendido_por.telefono + ')' : '' %>.
+                                <% } else { %>
+                                    Enviado el <%= fecha(r.createdAt) %>. Esperando que un refugio acepte atenderlo.
+                                <% } %>
+                            </p>
+                        </div>
+                    <% }); %>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>Página desarrollada por Harol Giovanny Lara Suarez</p>
+    </footer>
+
+</body>
+
+</html>

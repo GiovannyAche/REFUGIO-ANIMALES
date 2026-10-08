@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Bienestar Animal Bogotá</title>
+    <link rel="stylesheet" href="/interfaz.css">
+</head>
+
+<body>
+
+    <nav class="menu">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir o cerrar el menú" autocomplete="off">
+        <label for="menu-toggle" class="menu-icono"></label>
+        <img src="/imagenes/logo.svg" alt="Logo Bienestar Animal" class="logo">
+        <ul class="menu-lista">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/catalogo">Adopciones</a></li>
+            <li><a href="/about">Sobre Nosotros</a></li>
+            <li><a href="/refugios">Refugios</a></li>
+            <li><a href="/voluntariado">Voluntariado</a></li>
+        </ul>
+        <a href="/signin" class="btn-signin">Iniciar Sesión</a>
+    </nav>
+
+    <div class="contenido-login">
+        <div class="tarjeta-login">
+            <h2>Iniciar Sesión</h2>
+            <p class="subtitulo-login">Accede a la plataforma de gestión de bienestar animal</p>
+
+            <% if (typeof error !=='undefined' && error) { %>
+                <p class="mensaje-error">
+                    <%= error %>
+                </p>
+                <% } %>
+
+                    <form action="/login" method="POST">
+                        <label>Correo electrónico</label>
+                        <input type="email" name="email" placeholder="Ingresa tu correo" required>
+
+                        <label>Contraseña</label>
+                        <input type="password" name="password" placeholder="Ingresa tu contraseña" required>
+
+                        <button type="submit" class="boton btn-entrar"
+                            style="width: 100%; cursor: pointer;">Entrar</button>
+                    </form>
+
+                    <div class="login-links" style="margin-top: 15px; text-align: center;">
+                        <a href="#" style="color: #0EA5E9; text-decoration: none; font-size: 14px;">¿Olvidaste tu
+                            contraseña?</a>
+                        <p style="margin-top: 12px; font-size: 14px;">¿No tienes cuenta? <a href="/registro"
+                                style="color: #0EA5E9; text-decoration: none;">Regístrate</a></p>
+                    </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Página desarrollada por Harol Giovanny Lara Suarez</p>
+    </footer>
+
+</body>
+
+</html>

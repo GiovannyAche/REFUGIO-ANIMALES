@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Adopción - Bienestar Animal</title>
+    <link rel="stylesheet" href="/interfaz.css">
+</head>
+
+<body>
+
+    <nav class="menu">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir o cerrar el menú" autocomplete="off">
+        <label for="menu-toggle" class="menu-icono"></label>
+        <img src="/imagenes/logo.svg" alt="Logo Bienestar Animal" class="logo">
+        <ul class="menu-lista">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/catalogo" class="activo">Adopciones</a></li>
+            <li><a href="/about">Sobre Nosotros</a></li>
+            <li><a href="/refugios">Refugios</a></li>
+            <li><a href="/voluntariado">Voluntariado</a></li>
+        </ul>
+        <a href="<%= sesion ? '/panel' : '/signin' %>" class="btn-signin"><%= sesion ? 'Mi Panel' : 'Iniciar Sesión' %></a>
+    </nav>
+
+    <main class="contenido-catalogo">
+
+        <div class="catalogo-header">
+            <h1>Encuentra tu compañero ideal</h1>
+            <p>
+                Explora los animales rescatados que se encuentran listos para un proceso de adopción responsable en Bogotá D.C. Cada uno cuenta con el respaldo de nuestros refugios aliados.
+            </p>
+        </div>
+
+        <% if (typeof errorCarga !== 'undefined' && errorCarga) { %>
+            <p class="mensaje-error"><%= errorCarga %></p>
+        <% } %>
+
+        <div class="catalogo-grid-amplio">
+            
+            <% if (animales && animales.length > 0) { %>
+                <% animales.forEach(function(animal) { %>
+                    <div class="tarjeta-mascota">
+                        <div class="tarjeta-imagen-container">
+                            <img src="<%= animal.imagen %>" alt="<%= animal.nombre %>" onerror="this.onerror=null; this.src='/imagenes/logo.svg';">
+                        </div>
+                        <div class="tarjeta-contenido">
+                            <span class="badge-especie"><%= animal.especie %></span>
+                            <h3><%= animal.nombre %></h3>
+                            <p class="detalles-raza"><%= animal.raza %> • <%= animal.edad %></p>
+                            <% if (animal.refugio_nombre) { %>
+                                <p class="detalles-raza">Refugio: <%= animal.refugio_nombre %></p>
+                            <% } %>
+                            <p class="descripcion-animal"><%= animal.descripcion %></p>
+                            <% if (!sesion || sesion.rol === 'Ciudadano') { %>
+                                <a href="/solicitud/<%= animal.id %>" class="boton btn-adoptar">Solicitar Adopción</a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p class="sin-resultados">No hay animales disponibles en este momento.</p>
+            <% } %>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>Página desarrollada por Harol Giovanny Lara Suarez</p>
+    </footer>
+
+</body>
+
+</html>

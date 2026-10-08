@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <!-- Fondo circular acorde a la paleta -->
+  <circle cx="250" cy="200" r="160" fill="#1E293B" stroke="#334155" stroke-width="4"/>
+  
+  <!-- Estructura del Refugio / Centro de Rescate -->
+  <g transform="translate(140, 95)">
+    <!-- Edificio principal del refugio -->
+    <rect x="50" y="70" width="120" height="110" fill="#0F172A" stroke="#334155" stroke-width="3" rx="4"/>
+    
+    <!-- Techo del refugio (Símbolo de protección y hogar seguro) -->
+    <polygon points="40,70 110,20 180,70" fill="#0EA5E9"/>
+    
+    <!-- Cruz médica o símbolo de bienestar/cuidado en el techo -->
+    <rect x="103" y="32" width="14" height="26" fill="#F8FAFC" rx="2"/>
+    <rect x="97" y="38" width="26" height="14" fill="#F8FAFC" rx="2"/>
+    
+    <!-- Puerta del refugio -->
+    <rect x="90" y="120" width="40" height="60" fill="#1E293B" rx="6" stroke="#334155" stroke-width="2"/>
+    
+    <!-- Ventanas del albergue -->
+    <rect x="65" y="85" width="20" height="20" fill="#10B981" rx="3"/>
+    <rect x="135" y="85" width="20" height="20" fill="#10B981" rx="3"/>
+    
+    <!-- Huella de animal en la fachada (Representando identidad del refugio) -->
+    <circle cx="110" cy="98" r="14" fill="#334155" opacity="0.4"/>
+  </g>
+
+  <!-- Elemento de gestión de datos/inventario al lado (Panel de administración del refugio) -->
+  <g transform="translate(280, 150)">
+    <rect x="0" y="0" width="60" height="75" rx="6" fill="#0F172A" stroke="#0EA5E9" stroke-width="2"/>
+    <line x1="10" y1="15" x2="35" y2="15" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="10" y1="30" x2="50" y2="30" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+    <line x1="10" y1="45" x2="40" y2="45" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="10" y1="60" x2="45" y2="60" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

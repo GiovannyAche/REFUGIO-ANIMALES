@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Refugio - Bienestar Animal Bogotá</title>
+    <link rel="stylesheet" href="/interfaz.css">
+</head>
+
+<body>
+
+    <%
+        const estadoMascota = { 'Disponible': 'insignia-verde', 'En proceso': 'insignia-ambar', 'Adoptado': 'insignia-gris' };
+        const estadoSolicitud = { Pendiente: 'insignia-ambar', Aprobada: 'insignia-verde', Rechazada: 'insignia-roja' };
+        const tiposEmergencia = {
+            atropellado: 'Animal herido / Atropellado',
+            maltrato: 'Posible caso de maltrato',
+            abandono: 'Animal abandonado en vía pública'
+        };
+        const fecha = (valor) => new Date(valor).toLocaleDateString('es-CO');
+
+        const solicitudesPendientes = solicitudes.filter(s => s.estado === 'Pendiente');
+        const solicitudesRespondidas = solicitudes.filter(s => s.estado !== 'Pendiente');
+        const emergenciasPendientes = emergencias.filter(r => r.estado === 'Pendiente');
+        const emergenciasAtendidas = emergencias.filter(r => r.estado === 'Aceptada');
+    %>
+
+    <nav class="menu">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir o cerrar el menú" autocomplete="off">
+        <label for="menu-toggle" class="menu-icono"></label>
+        <img src="/imagenes/logo.svg" alt="Logo Bienestar Animal" class="logo">
+        <ul class="menu-lista">
+            <li><a href="/catalogo" class="activo">Ver Catálogo</a></li>
+            <li><a href="/logout" style="color: #EF4444;">Cerrar Sesión</a></li>
+        </ul>
+        <span class="btn-signin" style="background-color: #334155; font-size: 13px;">Refugio Aliado</span>
+    </nav>
+
+    <main class="contenido-catalogo">
+
+        <div class="catalogo-header">
+            <h1>Panel de Control del Refugio</h1>
+            <p>Bienvenido, <strong><%= nombre || email %></strong>. Administra los animales rescatados bajo tu tutela, responde las solicitudes de adopción y los reportes de emergencia, y registra nuevos ingresos en Bogotá D.C.</p>
+        </div>
+
+        <% if (ok) { %><p class="mensaje-exito"><%= ok %></p><% } %>
+        <% if (error) { %><p class="mensaje-error"><%= error %></p><% } %>
+
+        <!-- Sección de Estadísticas / Resumen -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+            <div class="tarjeta-mascota" style="padding: 20px; text-align: center;">
+                <h3 style="color: #0EA5E9; font-size: 28px; margin-bottom: 5px;"><%= mascotas.length %></h3>
+                <p class="descripcion-animal" style="margin: 0;">Animales Registrados</p>
+            </div>
+            <div class="tarjeta-mascota" style="padding: 20px; text-align: center;">
+                <h3 style="color: #10B981; font-size: 28px; margin-bottom: 5px;"><%= solicitudesPendientes.length %></h3>
+                <p class="descripcion-animal" style="margin: 0;">Solicitudes Pendientes</p>
+            </div>
+            <div class="tarjeta-mascota" style="padding: 20px; text-align: center;">
+                <h3 style="color: #F59E0B; font-size: 28px; margin-bottom: 5px;"><%= mascotas.filter(m => m.estado === 'Adoptado').length %></h3>
+                <p class="descripcion-animal" style="margin: 0;">Adopciones Exitosas</p>
+            </div>
+            <div class="tarjeta-mascota" style="padding: 20px; text-align: center;">
+                <h3 style="color: #EF4444; font-size: 28px; margin-bottom: 5px;"><%= emergenciasPendientes.length %></h3>
+                <p class="descripcion-animal" style="margin: 0;">Emergencias por Atender</p>
+            </div>
+        </div>
+
+        <!-- Contenedor Principal -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+            
+            <!-- Columna 1: Mis Animales Registrados -->
+            <div class="tarjeta-mascota" style="padding: 25px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h3>Gestión de Animales</h3>
+                    <p class="descripcion-animal">Mascotas de tu refugio. Las que están "Disponibles" aparecen en el catálogo de adopciones.</p>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <% if (mascotas.length === 0) { %>
+                        <p class="panel-vacio">Todavía no has publicado mascotas. Usa el formulario para registrar la primera.</p>
+                    <% } %>
+                    <% mascotas.forEach(function(m) { %>
+                        <div class="panel-caja">
+                            <div class="panel-fila">
+                                <span class="panel-titulo"><%= m.nombre %> (<%= m.especie %> - <%= m.raza %>)</span>
+                                <span class="insignia <%= estadoMascota[m.estado] || 'insignia-gris' %>"><%= m.estado %></span>
+                            </div>
+                            <div class="panel-fila" style="margin-top: 8px;">
+                                <span class="panel-texto" style="margin: 0;"><%= m.edad %> • <%= m.sexo %></span>
+                                <form action="/mascotas/<%= m._id %>/eliminar" method="POST" onsubmit="return confirm('¿Eliminar esta mascota del catálogo?');" style="margin: 0;">
+                                    <button type="submit" class="btn-mini btn-mini-roja">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <a href="/catalogo" class="boton btn-adoptar" style="text-align: center; text-decoration: none;">Ver Catálogo Completo</a>
+            </div>
+
+            <!-- Columna 2: Registrar Nuevo Animal -->
+            <div class="tarjeta-mascota" style="padding: 25px;">
+                <h3>Registrar Nueva Mascota</h3>
+                <p class="descripcion-animal" style="margin-bottom: 15px;">Añade un nuevo rescatado al sistema para que aparezca en el catálogo de adopciones.</p>
+                
+                <form id="formMascota" action="/mascotas" method="POST">
+                    <label class="panel-label" for="nombre">Nombre de la mascota</label>
+                    <input type="text" id="nombre" name="nombre" class="panel-input" placeholder="Ej. Firulais" maxlength="60" required>
+
+                    <div class="panel-dos-columnas">
+                        <div>
+                            <label class="panel-label" for="especie">Especie</label>
+                            <select id="especie" name="especie" class="panel-input">
+                                <option value="Perro">Perro</option>
+                                <option value="Gato">Gato</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="panel-label" for="sexo">Sexo</label>
+                            <select id="sexo" name="sexo" class="panel-input">
+                                <option value="Macho">Macho</option>
+                                <option value="Hembra">Hembra</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="panel-dos-columnas">
+                        <div>
+                            <label class="panel-label" for="edad">Edad aproximada</label>
+                            <input type="text" id="edad" name="edad" class="panel-input" placeholder="Ej. 1 año" maxlength="40" required>
+                        </div>
+                        <div>
+                            <label class="panel-label" for="tamano">Tamaño</label>
+                            <select id="tamano" name="tamano" class="panel-input">
+                                <option value="Pequeño">Pequeño</option>
+                                <option value="Mediano" selected>Mediano</option>
+                                <option value="Grande">Grande</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label class="panel-label" for="raza">Raza (opcional)</label>
+                    <input type="text" id="raza" name="raza" class="panel-input" placeholder="Ej. Criollo / Mestizo" maxlength="60">
+
+                    <label class="panel-label" for="descripcion">Descripción y carácter</label>
+                    <textarea id="descripcion" name="descripcion" class="panel-input" rows="3" maxlength="500" placeholder="Ej. Juguetona, sociable con niños, vacunada y esterilizada..." required></textarea>
+
+                    <label class="panel-label" for="foto">Foto de la mascota</label>
+                    <input type="file" id="foto" class="panel-input" accept="image/*" required>
+                    <input type="hidden" id="imagen" name="imagen">
+                    <img id="fotoPrevia" class="foto-previa" alt="Vista previa de la foto">
+                    <p id="fotoAviso" class="panel-texto" style="margin: -6px 0 12px; color: #FCA5A5;"></p>
+
+                    <button type="submit" class="boton btn-adoptar" style="width: 100%; cursor: pointer; border: none; margin-top: 5px;">Publicar Mascota</button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Solicitudes y emergencias (a todo el ancho, una debajo de la otra) -->
+        <div style="display: flex; flex-direction: column; gap: 30px; margin-top: 30px;">
+
+            <!-- Solicitudes de adopción recibidas -->
+            <div class="tarjeta-mascota" style="padding: 25px;">
+                <h3>Solicitudes de Adopción Recibidas</h3>
+                <p class="descripcion-animal" style="margin-bottom: 15px;">Personas que quieren adoptar a alguna de tus mascotas. Al aprobar una solicitud, la mascota pasa a "Adoptado" y las demás solicitudes por ella se cierran.</p>
+
+                <% if (solicitudes.length === 0) { %>
+                    <p class="panel-vacio">No has recibido solicitudes de adopción todavía.</p>
+                <% } %>
+
+                <% solicitudesPendientes.forEach(function(s) { %>
+                    <div class="panel-caja">
+                        <div class="panel-fila">
+                            <span class="panel-titulo">Por <%= s.mascota_id ? s.mascota_id.nombre : 'Mascota eliminada' %> • <%= s.ciudadano_id ? s.ciudadano_id.nombre : 'Usuario eliminado' %></span>
+                            <span class="insignia insignia-ambar">Pendiente</span>
+                        </div>
+                        <p class="panel-texto">
+                            <%= s.ciudadano_id ? s.ciudadano_id.email : '' %><%= s.ciudadano_id && s.ciudadano_id.telefono ? ' • Tel. ' + s.ciudadano_id.telefono : '' %> • Enviada el <%= fecha(s.createdAt) %>
+                        </p>
+                        <p class="panel-texto" style="color: #F8FAFC;">“<%= s.mensaje %>”</p>
+
+                        <form action="/solicitudes/<%= s._id %>/responder" method="POST" style="margin-top: 12px;">
+                            <input type="text" name="respuesta" class="panel-input" maxlength="500" placeholder="Mensaje para el solicitante (opcional)" style="margin-bottom: 0;">
+                            <div class="panel-acciones">
+                                <button type="submit" name="decision" value="Aprobada" class="btn-mini btn-mini-verde">Aprobar solicitud</button>
+                                <button type="submit" name="decision" value="Rechazada" class="btn-mini btn-mini-roja">Rechazar</button>
+                            </div>
+                        </form>
+                    </div>
+                <% }); %>
+
+                <% if (solicitudesRespondidas.length > 0) { %>
+                    <p class="panel-texto" style="margin: 20px 0 8px;">Solicitudes ya respondidas</p>
+                    <% solicitudesRespondidas.forEach(function(s) { %>
+                        <div class="panel-caja">
+                            <div class="panel-fila">
+                                <span class="panel-titulo"><%= s.mascota_id ? s.mascota_id.nombre : 'Mascota eliminada' %> • <%= s.ciudadano_id ? s.ciudadano_id.nombre : 'Usuario eliminado' %></span>
+                                <span class="insignia <%= estadoSolicitud[s.estado] %>"><%= s.estado %></span>
+                            </div>
+                            <% if (s.estado === 'Aprobada' && s.ciudadano_id) { %>
+                                <p class="panel-texto">Contacto: <%= s.ciudadano_id.email %><%= s.ciudadano_id.telefono ? ' • Tel. ' + s.ciudadano_id.telefono : '' %></p>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+
+            <!-- Reportes de emergencia -->
+            <div class="tarjeta-mascota" style="padding: 25px;">
+                <h3 style="color: #EF4444;">Reportes de Emergencia</h3>
+                <p class="descripcion-animal" style="margin-bottom: 15px;">Alertas de ciudadanos que le llegan a todos los refugios aliados. Si aceptas, tú te encargas del caso; si rechazas, solo dejas de verla tú.</p>
+
+                <% if (emergencias.length === 0) { %>
+                    <p class="panel-vacio">No hay reportes de emergencia pendientes.</p>
+                <% } %>
+
+                <% emergenciasPendientes.forEach(function(r) { %>
+                    <div class="panel-caja">
+                        <div class="panel-fila">
+                            <span class="panel-titulo"><%= tiposEmergencia[r.tipo] || r.tipo %></span>
+                            <span class="insignia insignia-roja">Por atender</span>
+                        </div>
+                        <p class="panel-texto"><strong style="color: #F8FAFC;">Ubicación:</strong> <%= r.ubicacion %></p>
+                        <p class="panel-texto" style="color: #F8FAFC;"><%= r.descripcion %></p>
+                        <p class="panel-texto">
+                            Reportado por <%= r.ciudadano_id ? r.ciudadano_id.nombre : 'usuario eliminado' %><%= r.ciudadano_id && r.ciudadano_id.telefono ? ' • Tel. ' + r.ciudadano_id.telefono : '' %> • <%= fecha(r.createdAt) %>
+                        </p>
+                        <div class="panel-acciones">
+                            <form action="/emergencias/<%= r._id %>/responder" method="POST">
+                                <input type="hidden" name="decision" value="Aceptada">
+                                <button type="submit" class="btn-mini btn-mini-verde">Podemos atenderlo</button>
+                            </form>
+                            <form action="/emergencias/<%= r._id %>/responder" method="POST">
+                                <input type="hidden" name="decision" value="Rechazada">
+                                <button type="submit" class="btn-mini btn-mini-gris">No podemos atenderlo</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+
+                <% if (emergenciasAtendidas.length > 0) { %>
+                    <p class="panel-texto" style="margin: 20px 0 8px;">Casos que aceptaste</p>
+                    <% emergenciasAtendidas.forEach(function(r) { %>
+                        <div class="panel-caja">
+                            <div class="panel-fila">
+                                <span class="panel-titulo"><%= tiposEmergencia[r.tipo] || r.tipo %> • <%= r.ubicacion %></span>
+                                <span class="insignia insignia-verde">En atención</span>
+                            </div>
+                            <p class="panel-texto">
+                                Contacto: <%= r.ciudadano_id ? r.ciudadano_id.nombre + ' • ' + r.ciudadano_id.email : 'usuario eliminado' %><%= r.ciudadano_id && r.ciudadano_id.telefono ? ' • Tel. ' + r.ciudadano_id.telefono : '' %>
+                            </p>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>Página desarrollada por Harol Giovanny Lara Suarez</p>
+    </footer>
+
+    <script>
+        // La foto se reduce en el navegador (máx. 800 px) antes de enviarla, para que cargue rápido
+        const entradaFoto = document.getElementById('foto');
+        const campoImagen = document.getElementById('imagen');
+        const fotoPrevia = document.getElementById('fotoPrevia');
+        const fotoAviso = document.getElementById('fotoAviso');
+
+        entradaFoto.addEventListener('change', () => {
+            const archivo = entradaFoto.files[0];
+            campoImagen.value = '';
+            fotoPrevia.style.display = 'none';
+            fotoAviso.textContent = '';
+            if (!archivo) return;
+
+            if (!archivo.type.startsWith('image/')) {
+                fotoAviso.textContent = 'El archivo debe ser una imagen (JPG, PNG o WEBP).';
+                entradaFoto.value = '';
+                return;
+            }
+
+            const lector = new FileReader();
+            lector.onload = () => {
+                const imagen = new Image();
+                imagen.onload = () => {
+                    const escala = Math.min(1, 800 / Math.max(imagen.width, imagen.height));
+                    const lienzo = document.createElement('canvas');
+                    lienzo.width = Math.round(imagen.width * escala);
+                    lienzo.height = Math.round(imagen.height * escala);
+                    const contexto = lienzo.getContext('2d');
+                    contexto.fillStyle = '#FFFFFF'; // fondo blanco para imágenes con transparencia
+                    contexto.fillRect(0, 0, lienzo.width, lienzo.height);
+                    contexto.drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+
+                    const resultado = lienzo.toDataURL('image/jpeg', 0.8);
+                    campoImagen.value = resultado;
+                    fotoPrevia.src = resultado;
+                    fotoPrevia.style.display = 'block';
+                };
+                imagen.onerror = () => {
+                    fotoAviso.textContent = 'No se pudo leer la imagen. Prueba con otra foto.';
+                    entradaFoto.value = '';
+                };
+                imagen.src = lector.result;
+            };
+            lector.readAsDataURL(archivo);
+        });
+
+        // Evita enviar el formulario si la foto todavía se está procesando
+        document.getElementById('formMascota').addEventListener('submit', (e) => {
+            if (!campoImagen.value) {
+                e.preventDefault();
+                fotoAviso.textContent = 'Espera un momento a que cargue la foto y vuelve a intentar.';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

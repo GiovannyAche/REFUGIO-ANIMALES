@@ -1,0 +1,4 @@
+# Dependencias y credenciales: nunca se suben al repositorio
+node_modules/
+.env
+*.log

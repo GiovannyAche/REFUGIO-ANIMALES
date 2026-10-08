@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <!-- Fondo circular acorde a la paleta -->
+  <circle cx="250" cy="200" r="160" fill="#1E293B" stroke="#334155" stroke-width="4"/>
+  
+  <!-- Dispositivo digital (Pantalla / Plataforma en Bogotá) -->
+  <g transform="translate(130, 80)">
+    <!-- Marco de la tablet o pantalla -->
+    <rect x="20" y="20" width="200" height="140" rx="12" fill="#0F172A" stroke="#0EA5E9" stroke-width="4"/>
+    <!-- Pantalla interna -->
+    <rect x="35" y="35" width="170" height="95" rx="4" fill="#1E293B"/>
+    
+    <!-- Elementos de la interfaz (perfil detallado / listado de adopción) -->
+    <rect x="45" y="45" width="30" height="30" rx="15" fill="#0EA5E9"/>
+    <rect x="85" y="50" width="100" height="10" rx="3" fill="#F8FAFC"/>
+    <rect x="85" y="65" width="70" height="8" rx="3" fill="#94A3B8"/>
+    
+    <rect x="45" y="85" width="140" height="6" rx="2" fill="#94A3B8"/>
+    <rect x="45" y="98" width="110" height="6" rx="2" fill="#94A3B8"/>
+    
+    <!-- Botón de solicitud de adopción digital -->
+    <rect x="115" y="112" width="70" height="12" rx="4" fill="#10B981"/>
+    
+    <!-- Base o soporte del dispositivo -->
+    <path d="M100 160 L140 160 L150 175 L90 175 Z" fill="#334155"/>
+  </g>
+
+  <!-- Mascota asomándose vinculada a la plataforma -->
+  <g transform="translate(250, 185)">
+    <!-- Cabeza del perrito estilizada -->
+    <circle cx="60" cy="65" r="30" fill="#0EA5E9"/>
+    <!-- Orejas caídas -->
+    <ellipse cx="35" cy="60" rx="10" ry="18" fill="#0284C7" transform="rotate(-15 35 60)"/>
+    <ellipse cx="85" cy="60" rx="10" ry="18" fill="#0284C7" transform="rotate(15 85 60)"/>
+    <!-- Nariz y detalles -->
+    <circle cx="60" cy="72" r="5" fill="#121619"/>
+    
+    <!-- Corazón conectando la tecnología con el bienestar animal -->
+    <path d="M 60 15 C 60 5, 45 -5, 35 5 C 25 15, 35 30, 45 40 C 55 30, 60 25, 60 15 Z" fill="#10B981" transform="translate(5, -20) scale(0.8)"/>
+  </g>
+</svg>

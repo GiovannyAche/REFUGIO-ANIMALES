@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="100%" height="100%">
+  <!-- Fondo circular acorde a la paleta -->
+  <circle cx="250" cy="200" r="160" fill="#1E293B" stroke="#334155" stroke-width="4"/>
+  
+  <!-- Grupo de personas / manos unidas (Comunidad y Voluntariado) -->
+  <g transform="translate(130, 110)">
+    <!-- Persona 1 (Izquierda) -->
+    <circle cx="80" cy="50" r="20" fill="#0EA5E9"/>
+    <path d="M50 110 C50 85, 65 75, 80 75 C95 75, 110 85, 110 110 Z" fill="#0EA5E9"/>
+    
+    <!-- Persona 2 (Derecha - Central) -->
+    <circle cx="160" cy="50" r="20" fill="#10B981"/>
+    <path d="M130 110 C130 85, 145 75, 160 75 C175 75, 190 85, 190 110 Z" fill="#10B981"/>
+
+    <!-- Manos enlazadas / Corazón central de apoyo comunitario -->
+    <path d="M 120 70 C 120 55, 100 40, 85 55 C 70 70, 120 105, 120 105 C 120 105, 170 70, 155 55 C 140 40, 120 55, 120 70 Z" fill="#F8FAFC"/>
+  </g>
+
+  <!-- Elemento de recursos / donaciones o asistencia -->
+  <g transform="translate(180, 240)">
+    <!-- Caja de suministros de ayuda -->
+    <rect x="30" y="10" width="100" height="60" rx="4" fill="#0F172A" stroke="#334155" stroke-width="2"/>
+    <path d="M30 25 L80 45 L130 25" fill="none" stroke="#0EA5E9" stroke-width="3"/>
+    <rect x="70" y="30" width="20" height="25" fill="#10B981" rx="2"/>
+  </g>
+</svg>

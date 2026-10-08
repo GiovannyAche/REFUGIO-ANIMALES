@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Bienestar Animal Bogotá</title>
+    <link rel="stylesheet" href="/interfaz.css">
+</head>
+<body class="pagina-registro">
+    <nav class="menu">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir o cerrar el menú" autocomplete="off">
+        <label for="menu-toggle" class="menu-icono"></label>
+        <img src="/imagenes/logo.svg" alt="Logo Bienestar Animal" class="logo">
+        <ul class="menu-lista">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/catalogo">Adopciones</a></li>
+            <li><a href="/about">Sobre Nosotros</a></li>
+            <li><a href="/refugios">Refugios</a></li>
+            <li><a href="/voluntariado">Voluntariado</a></li>
+        </ul>
+        <a href="/signin" class="btn-signin">Iniciar Sesión</a>
+    </nav>
+    <div class="registro-container">
+        <h2>Unirse a la Red</h2>
+        <form id="formRegistro">
+            <div class="form-group">
+                <label>Nombre Completo / Nombre del Refugio</label>
+                <input type="text" id="nombre" required>
+            </div>
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Cuenta</label>
+                <select id="rol" required>
+                    <!-- Nota: No incluimos 'Admin' aquí intencionalmente -->
+                    <option value="Ciudadano">Ciudadano (Adoptante)</option>
+                    <option value="Refugio">Refugio de Animales</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" id="telefono">
+            </div>
+            <button type="submit">Registrarme</button>
+        </form>
+        <div id="mensaje"></div>
+    </div>
+    <footer class="footer">
+        <p>Página desarrollada por Harol Giovanny Lara Suarez</p>
+    </footer>
+
+
+    <script>
+        // Lógica para enviar los datos a tu API creada en Node.js
+        document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Evita que la página se recargue
+
+            // Recolectar datos del formulario
+            const datos = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                rol: document.getElementById('rol').value,
+                telefono: document.getElementById('telefono').value
+            };
+
+            try {
+                // Enviar la petición POST a nuestra propia API
+                const respuesta = await fetch('/api/usuarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await respuesta.json();
+                const divMensaje = document.getElementById('mensaje');
+
+                if (respuesta.ok) {
+                    divMensaje.style.color = '#4caf50'; // Verde de éxito
+                    divMensaje.innerText = resultado.mensaje;
+                    document.getElementById('formRegistro').reset(); // Limpiar formulario
+                    
+                    // Aquí podrías redirigir al login después de unos segundos
+                    // setTimeout(() => window.location.href = '/login', 3000);
+                } else {
+                    divMensaje.style.color = '#f44336'; // Rojo de error
+                    divMensaje.innerText = resultado.error;
+                }
+            } catch (error) {
+                document.getElementById('mensaje').innerText = 'Error de conexión con el servidor.';
+            }
+        });
+    </script>
+</body>
+</html>

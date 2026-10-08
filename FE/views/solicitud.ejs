@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Adopción - Bienestar Animal Bogotá</title>
+    <link rel="stylesheet" href="/interfaz.css">
+</head>
+
+<body>
+
+    <nav class="menu">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir o cerrar el menú" autocomplete="off">
+        <label for="menu-toggle" class="menu-icono"></label>
+        <img src="/imagenes/logo.svg" alt="Logo Bienestar Animal" class="logo">
+        <ul class="menu-lista">
+            <li><a href="/catalogo" class="activo">Ver Catálogo</a></li>
+            <li><a href="/panel">Mi Panel</a></li>
+            <li><a href="/logout" style="color: #EF4444;">Cerrar Sesión</a></li>
+        </ul>
+        <span class="btn-signin" style="background-color: #334155; font-size: 13px;">Ciudadano / Adoptante</span>
+    </nav>
+
+    <main class="contenido-catalogo">
+
+        <div class="catalogo-header">
+            <h1>Solicitar adopción de <%= animal.nombre %></h1>
+            <p>Tu solicitud le llegará al refugio que cuida a <%= animal.nombre %>. El refugio la revisará y te responderá desde tu panel.</p>
+        </div>
+
+        <div class="tarjeta-mascota solicitud-mascota">
+            <div class="tarjeta-imagen-container">
+                <img src="<%= animal.imagen %>" alt="<%= animal.nombre %>" onerror="this.onerror=null; this.src='/imagenes/logo.svg';">
+            </div>
+            <div class="tarjeta-contenido">
+                <span class="badge-especie"><%= animal.especie %></span>
+                <h3><%= animal.nombre %></h3>
+                <p class="detalles-raza"><%= animal.raza %> • <%= animal.edad %></p>
+                <% if (animal.refugio_nombre) { %>
+                    <p class="detalles-raza">Refugio: <%= animal.refugio_nombre %></p>
+                <% } %>
+                <p class="descripcion-animal"><%= animal.descripcion %></p>
+
+                <% if (error) { %>
+                    <p class="mensaje-error"><%= error %></p>
+                <% } %>
+
+                <% if (animal.estado !== 'Disponible') { %>
+                    <p class="mensaje-error">Esta mascota ya no está disponible para adopción.</p>
+                    <a href="/catalogo" class="boton btn-adoptar" style="text-align: center; text-decoration: none;">Volver al catálogo</a>
+                <% } else { %>
+                    <form action="/solicitud/<%= animal.id %>" method="POST">
+                        <label class="panel-label" for="mensaje">Cuéntale al refugio por qué quieres adoptar</label>
+                        <textarea id="mensaje" name="mensaje" class="panel-input" rows="5" minlength="10" maxlength="1000" required
+                            placeholder="Ej. Vivo en una casa con patio, tengo tiempo para pasear y cuidar a la mascota..."></textarea>
+
+                        <div class="panel-acciones">
+                            <button type="submit" class="boton btn-adoptar" style="flex: 1; cursor: pointer; border: none;">Enviar solicitud</button>
+                            <a href="/catalogo" class="btn-mini btn-mini-gris" style="display: inline-flex; align-items: center; text-decoration: none; padding: 0 18px;">Cancelar</a>
+                        </div>
+                    </form>
+                <% } %>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>Página desarrollada por Harol Giovanny Lara Suarez</p>
+    </footer>
+
+</body>
+
+</html>
